@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>VR Scatter Plot</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  </head>
+  <body>
+    
+    <a-assets>
+         <audio id="voiceover" src="GDE_LE.mp3" preload="auto"></audio>
+    </a-assets>
+
+    
+    console.log('Parsed data:', data);
+
+    <a-scene background="color: #ECECEC">
+
+      <!-- Camera -->
+      <a-entity camera look-controls wasd-controls position="0 1.6 5"></a-entity>
+
+      <!-- Controllers -->
+      <a-entity laser-controls="hand: right" raycaster="objects: .clickable"></a-entity>
+      <a-entity laser-controls="hand: left" raycaster="objects: .clickable"></a-entity>
+
+      <!-- Graph origin shifted back -->
+      <a-entity id="graph" position="-2 0 -4"></a-entity>
+
+      <!-- Exit Button -->
+          <a-box id="exit-btn" position="3 0.7 -4.2" depth="0.2" height="0.5" width="2"
+             color="tomato" class="clickable"></a-box>
+      <a-text value="Exit to home page" position="3 .7 -4.0" align="center" color="white" width="4" class="clickable"></a-text>
+
+      
+      <!-- Info Panel -->
+         <a-entity id="info-panel" position="0 2.9 -4" visible="true">
+          <a-plane color="#333" width="2" height="1" opacity="1"></a-plane>
+          <a-text id="info-text" value="" color="#FFF" position=" -0.9 0.2 .1" width="1.8"></a-text>
+         </a-entity>
+
+     
+      
+     
+<!-- Plane of equation -->
+<a-box 
+  position="0 1.29 -2.5" 
+  rotation="-25 90 0" 
+  width="3" 
+  height="0.01" 
+  depth="4.5" 
+  color="Blue"
+  material="opacity: 0.2; transparent: true;">
+</a-box>      
+
+<!-- Gridlines  #4CC3D9-->
+      
+<a-box 
+  position="-1.25 .71  -2.5" 
+  rotation="-25 90 0" 
+  width="3" 
+  height="0.03" 
+  depth=".03" 
+  color="Blue"
+  material="opacity: 0.4; transparent: true;">
+</a-box>      
+
+      
+<a-box 
+  position="-.5 1.06 -2.5" 
+  rotation="-25 90 0" 
+  width="3" 
+  height="0.03" 
+  depth=".03" 
+  color="Blue"
+  material="opacity: 0.4; transparent: true;">
+</a-box>      
+
+
+    
+<a-box 
+  position=".25 1.41 -2.5" 
+  rotation="-25 90 0" 
+  width="3" 
+  height="0.03" 
+  depth=".03" 
+  color="Blue"
+  material="opacity: 0.4; transparent: true;">
+</a-box>      
+
+<a-box 
+  position="1 1.76 -2.5" 
+  rotation="-25 90 0" 
+  width="3" 
+  height="0.03" 
+  depth=".03" 
+  color="Blue"
+  material="opacity: 0.4; transparent: true;">
+</a-box>      
+      
+      
+      
+<!-- Equation text Lines (slightly above the box) -->
+<a-entity position="1 1.9 -1" rotation="00 00 25">
+  <a-text value="Regression equation"                                                                           position="0  0.7 0.01"  align="left" width="3" color="blue"></a-text>
+  <a-text value="Life exp = 24.9 + 12.3 * Log10(GDP)"                                                           position="0  0.5 0.01"  align="left" width="1" color="blue"></a-text>
+  <a-text value="A 10 fold increase in GDP per capita increases life expectancy by 12.3 years. 
+                 Doubling GDP per capita increases life expecancy by 2.46 years"                                position="0  0.3 0.01" align="left" width="1" color="blue"></a-text>
+  <a-text value="Time has almost no effect. A relatively rich country in 1960 with a GDP of around 5,000
+                 will have about the same life expectancy as a relatively poor country in 2023 wit the 
+                 same GDP per capita"                                                                           position="0  -0.0 0.01" align="left" width="1" color="blue"></a-text>
+</a-entity>
+
+     
+      
+<a-entity position="-2 -.2 -.1" rotation="0 90 00">
+  <a-text value="Year"                                                                               position="0      0.0  0"  align="center" width="4" color="blue"> </a-text>
+  <a-text value="2023"                                                                               position="1.000  0.8  0"  align="center" width="4" color="blue"> </a-text>
+  <a-text value="1960"                                                                               position="4.000  0.8  0"  align="center" width="4" color="blue"></a-text>
+  <a-text value="1980"                                                                               position="3.048  0.8  0"  align="center" width="4" color="blue"></a-text>
+  <a-text value="2000"                                                                               position="2.095  0.8  0"  align="center" width="4" color="blue"></a-text>
+  
+      </a-entity>
+      
+
+<a-entity position="-2 -.2 -3.8" rotation="0 00 00">
+  <a-text value="US$100pc"                                                                               position=".75  0.4 0.01"  align="center" width="2" color="red"></a-text>
+  <a-text value="US$1,000pc"                                                                             position="1.5  0.4 0.01"  align="center" width="2" color="red"></a-text>
+  <a-text value="US$10,000pc"                                                                            position="2.25 0.4 0.01"  align="center" width="2" color="red"></a-text>
+  <a-text value="US$100,000pc"                                                                           position="3    0.4 0.01"  align="center" width="2" color="red"></a-text>
+</a-entity>
+      
+<a-entity position="-2 0 -4" rotation="0 00 0">
+  <a-text value="50"                                                                           position=".1 0.714286   0.00"  align="center" width="3" color="green"></a-text>
+  <a-text value="60"                                                                           position=".1 1.000000   0.00"  align="center" width="3" color="green"></a-text>
+  <a-text value="70"                                                                           position=".1 1.285714   0.00"  align="center" width="3" color="green"></a-text>
+  <a-text value="80"                                                                           position=".1 1.571429   0.00"  align="center" width="3" color="green"></a-text>
+  <a-text value="90"                                                                           position=".1 1.857143   0.00"  align="center" width="3" color="green"></a-text>
+</a-entity>
+      
+<a-entity position="-2.5 2.5 -1" rotation="0 90 0">
+  <a-text value="Life expectancy and GDP"                                                      position="0 0 0.01"  align="left" width="4" color="black"></a-text>
+  <a-text value="This graph shows the relationship between life expecancy at birth, and GDP over the past 63 years. The volume of the spheres is proportion to the population of the country in that year. 
+                 The colour of the sphere represents the country's region or continent. Point your laser at a sphere and shoot it to identify the details of that country in that year."
+                                                                                               position="0 -.9  0.01"  align="left" width="3" color="Black"></a-text>
+</a-entity>
+
+      
+      
+    </a-scene>
+    
+    <script>
+      // Normalization ranges
+      const minGDP = 1, maxGDP = 5;
+      const minYear = 1960, maxYear = 2023;
+      const minLE = 25, maxLE = 130;
+    
+
+      
+       const continentColors = {
+        'South Asia': '#e74c3c',                      <!-- red -->
+        'East Asia & Pacific': '#f1c40f',             <!-- moon yellow -->
+        'Europe & Central Asia': '#3498db',           <!-- summer sky (blue) -->
+        'Middle East & North Africa': '#2ecc71',      <!-- sea green -->
+        'Latin America & Caribbean': '#be107d',       <!-- Violet Red -->
+        'Sub-Saharan Africa': '#1abc9c',              <!-- light green -->
+        'North America': '#e67e22',                   <!-- Tahiti gold (orange) -->
+        'Other': '#95a5a6'
+      };
+     
+      
+      // Normalize a value between a and b into 0–3 space
+      function normalize(value, min, max) {
+        return ((value - min) / (max - min)) * 3;
+      }
+      
+      function cubeRootScale(pop) {
+        return Math.cbrt(pop) / 16000;
+      }
+      function roundMillions(number) {
+  return Math.round(number / 1000000);
+}
+
+
+      fetch('GDP_Time_LE.csv')
+        .then(res => res.text())
+        .then(csv => {
+          const parsed = Papa.parse(csv, { header: true });
+          const data = parsed.data;
+          const graph = document.getElementById('graph');
+
+          data.forEach(row => {
+            const x = normalize(parseFloat(row.LogGDP), minGDP, maxGDP);
+            const y = normalize(parseFloat(row.Life_Expectancy), minLE, maxLE);
+            const z = normalize(parseFloat(row.Year), minYear, maxYear);
+//          const color = 'hsl(' + Math.random() * 360 + ', 70%, 60%)';
+            
+            const population = parseFloat(row.Population);
+            const radius = cubeRootScale(population);
+            const color = continentColors[row.Region] || continentColors['Other'];
+
+            
+            
+
+            const sphere = document.createElement('a-sphere');
+            sphere.setAttribute('position', `${x} ${y} ${z}`);
+            sphere.setAttribute('radius', radius);
+            sphere.setAttribute('color', color);
+            sphere.setAttribute('tooltip', row.Country);
+            sphere.setAttribute('class', 'clickable');
+            
+            // Attach data attributes
+            sphere.setAttribute('data-country', row.Country);
+            sphere.setAttribute('data-year', row.Year);
+            sphere.setAttribute('data-life', row.Life_Expectancy);
+            sphere.setAttribute('data-gdp', row.GDP);
+            sphere.setAttribute('data-pop', row.Population);
+            sphere.setAttribute('data-region', row.Region);
+
+graph.appendChild(sphere);
+            graph.appendChild(sphere);
+          });
+
+          // Add axes
+          const axes = [
+            { axis: 'x', pos: '2 0 0', rot: '0 0 90', color: 'red',   label: 'GDP per capita (Log scale)' , labelPos: '2    -0.2   0' },
+            { axis: 'y', pos: '0 2 0', rot: '0 0 0',  color: 'green', label: 'Life expectancy'            , labelPos: '0     2.2   0' },
+            { axis: 'z', pos: '0 0 2', rot: '90 0 0', color: 'blue',  label: ''                           , labelPos: '0     0.1   4.2' },
+          ];
+
+          axes.forEach(a => {
+            const cyl = document.createElement('a-cylinder');
+            cyl.setAttribute('position', a.pos);
+            cyl.setAttribute('rotation', a.rot);
+            cyl.setAttribute('height', 4);
+            cyl.setAttribute('radius', 0.01);
+            cyl.setAttribute('color', a.color);
+            graph.appendChild(cyl);
+
+            const label = document.createElement('a-text');
+            label.setAttribute('value', a.label);
+            label.setAttribute('position', a.labelPos);
+            label.setAttribute('color', a.color);
+            label.setAttribute('width', 4);
+            graph.appendChild(label);
+          });
+        });
+     
+      
+// Click on sphere to create       
+document.addEventListener('DOMContentLoaded', () => {
+  const infoPanel = document.getElementById('info-panel');
+  const infoText = document.getElementById('info-text');
+
+  // Delegate click events to the scene
+  document.querySelector('a-scene').addEventListener('click', (evt) => {
+    const intersectedEl = evt.target;
+
+    // Check if the clicked element has the 'clickable' class
+    if (intersectedEl.classList && intersectedEl.classList.contains('clickable')) {
+      const country = intersectedEl.getAttribute('data-country');
+      const year = intersectedEl.getAttribute('data-year');
+      const life = intersectedEl.getAttribute('data-life');
+      const gdp = intersectedEl.getAttribute('data-gdp');
+      const pop = intersectedEl.getAttribute('data-pop');
+      const region = intersectedEl.getAttribute('data-region');
+
+      // Update and show the info panel
+      infoText.setAttribute('value', `Country: ${country}\nYear: ${year}\nLife Expectancy: ${life}\nReal_GDP_per_capita_2023USD: ${gdp}\nPopulation Millions: ${roundMillions(pop)}\nRegion: ${region}`);
+      infoPanel.setAttribute('visible', true);
+    } else {
+      // Hide the info panel if clicked elsewhere
+      infoPanel.setAttribute('visible', false);
+    }
+  });
+});
+      
+
+      
+      // Exit button handler
+      document.addEventListener('DOMContentLoaded', () => {
+        const exitBtn = document.querySelector('#exit-btn');
+        exitBtn.addEventListener('click', () => {
+         if (navigator.xr && navigator.xr.getSessions) {
+          navigator.xr.getSessions().then(sessions => {
+          sessions.forEach(session => session.end());
+           });
+          }
+          window.location.href = "index.html";
+        });
+      });
+    </script>
+  </body>
+</html>

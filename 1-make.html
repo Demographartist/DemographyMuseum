@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Museum of Demography – 3D Models</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background-color: #f0f0f0;
+      padding: 20px 30px;
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+
+    header h2 {
+      margin: 5px 0 0;
+      font-size: 18px;
+      font-weight: normal;
+      color: #555;
+    }
+
+    main {
+      display: flex;
+      flex: 1;
+    }
+
+    .menu {
+      width: 450px;
+      background-color: #333;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .menu-top a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .menu-top a:hover {
+      color: #ccc;
+    }
+
+    .acknowledgement {
+      font-size: 14px;
+      color: #ccc;
+      margin-top: 30px;
+      padding-right: 10px;
+      overflow-y: auto;
+      max-height: 300px;
+    }
+
+    .content {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      border: 1px solid #ccc;
+    }
+
+    #caption {
+      margin-top: 15px;
+      font-size: 18px;
+    }
+
+    #download {
+      margin-top: 10px;
+      font-size: 16px;
+      text-decoration: underline;
+      color: #0066cc;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Museum of World Demography</h1>
+    <h2>Population models you can explore and download</h2>
+  </header>
+
+  <main>
+    <div class="menu">
+      <div class="menu-top">
+        <a href="1-index.html">Download the R code</a>
+        <a>————————————</a>
+        <a href="1-make.html">Design your very own model in R</a>
+        <a>————————————</a>
+        <a href="1-print.html">Print your own model from the Museum</a>
+      </div>
+
+      <div class="acknowledgement">
+        <!-- Acknowledgements text unchanged -->
+        <!-- (You can paste your same acknowledgements here as needed) -->
+        <p>
+          This museum would not be possible without the amazing <a href="https://makerspace.anu.edu.au/" style="color: #99ccff;" target="_blank">ANU Makerspace</a>...
+        </p>
+      </div>
+    </div>
+
+    <div class="content">
+      <div id="viewer" style="width: 800px; height: 500px;"></div>
+      <div id="caption">Italy Male Population Pyramid</div>
+      <a id="download" href="https://cdn.glitch.global/243e30c0-188c-4a27-ac5a-08186871761b/thumbnails%2FItalyMale.stl?1746790557375" download>Download STL file</a>
+    </div>
+  </main>
+
+  <!-- Three.js and STL loader -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/STLLoader.js"></script>
+
+  <script>
+    const models = [
+      { file: "https://cdn.glitch.global/243e30c0-188c-4a27-ac5a-08186871761b/thumbnails%2FItalyMale.stl?1746790557375", caption: "Italy Male Population Pyramid" },
+      { file: "Francefemale.stl", caption: "France Female Population Pyramid" },
+      { file: "AustraliaTotal.stl", caption: "Australia Total Population Pyramid" }
+    ];
+
+    let index = 0;
+    let scene, camera, renderer, controls, loader, model;
+
+    const viewer = document.getElementById("viewer");
+    const caption = document.getElementById("caption");
+    const download = document.getElementById("download");
+
+    function initViewer() {
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(45, viewer.clientWidth / viewer.clientHeight, 0.1, 1000);
+      camera.position.set(0, 0, 100);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(viewer.clientWidth, viewer.clientHeight);
+      viewer.appendChild(renderer.domElement);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+
+      const light = new THREE.DirectionalLight(0xffffff, 1);
+      light.position.set(1, 1, 1).normalize();
+      scene.add(light);
+
+      loader = new THREE.STLLoader();
+      loadModel();
+      animate();
+    }
+
+    function loadModel() {
+      if (model) scene.remove(model);
+
+      loader.load(models[index].file, geometry => {
+        const material = new THREE.MeshPhongMaterial({ color: 0x3399ff });
+        model = new THREE.Mesh(geometry, material);
+        geometry.computeBoundingBox();
+        const center = geometry.boundingBox.getCenter(new THREE.Vector3());
+        model.position.sub(center);
+        scene.add(model);
+
+        caption.textContent = models[index].caption;
+        download.href = models[index].file;
+      });
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (model) model.rotation.y += 0.005;
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    // Rotate to next model every 6 seconds
+    setInterval(() => {
+      index = (index + 1) % models.length;
+      loadModel();
+    }, 3000);
+
+    initViewer();
+  </script>
+</body>
+</html>

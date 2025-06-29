@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>City Density VR Viewer</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  </head>
+  <body>
+    <a-scene background="color: #ECECEC">
+      <!-- Lighting -->
+      <a-entity light="type: ambient; color: #ffffff; intensity: 0.8"></a-entity>
+      <a-entity light="type: directional; color: #ffffff; intensity: 0.5" position="1 1 1"></a-entity>
+
+      <!-- Camera Rig   <a-entity id="cameraRig" position="0 0 5">-->
+      <a-entity id="cameraRig" position="0 0 2" rotation="0 0 0">
+        <a-entity camera wasd-controls look-controls position="0 1.6 0">
+  <a-cursor></a-cursor>
+</a-entity>
+      </a-entity>
+
+      <!-- Laser Controls -->
+      <a-entity laser-controls="hand: right" raycaster="objects: .clickable"></a-entity>
+      <a-entity laser-controls="hand: left" raycaster="objects: .clickable"></a-entity>
+
+      <!-- Ground -->
+      <a-plane rotation="-90 0 0" width="10" height="10" color="white" position="0 0 0"></a-plane>
+
+      <!-- Graph -->
+      <a-entity id="graph" position="0 0 0"></a-entity>
+
+      <!-- Menu Buttons -->
+      <a-entity id="menu" position="0 2 -2"></a-entity>
+
+      <!-- Exit Button -->
+      <a-box  id="exitButton" class="clickable"     position="-1 1   -3"  depth="0.1" height="0.5" width="2.5" color="#ff5555"></a-box>
+      <a-text value="Exit to home page"                     position="-1 1 -2.85" align="center" color="black" width="6"></a-text>
+      
+
+      
+     <a-text value="Population density"                                 position="-5 4 0" rotation="00 90 0"   align="left" color="black" width="9" ></a-text>
+     <a-text value="Each column represents 1 square km. The height represents the density (or population) of that square kilometre. Walk around the city to get your bearings. Compare the density and urban form of different cities."                                 
+             
+                                                                        position="-5 3 0" rotation="00 90 0"   align="left" color="black" width="5" ></a-text>
+
+
+      
+      <!-- Legend -->
+                                                                                                               <a-text value="Legend"                  position="1.6   1.3   -3.95" align="left" color="black" width="7"></a-text>      
+                                                                                                               <a-text value="People per square km"    position="1.6   0.9   -3.95" align="left" color="black" width="4"></a-text>      
+      <a-box  position="1.00   0       -4" depth=".1" height="0.00"      width=".1" color="#aaaaaa"></a-box>   <a-text value="0"        position="1.1 .1  -3.85" align="center" color="black" width="2"></a-text>
+      <a-box  position="1.50   0       -4" depth=".1" height="0.000025"  width=".1" color="#00ff00"></a-box>   <a-text value="1"        position="1.6 .1  -3.85" align="center" color="black" width="2"></a-text>
+      <a-box  position="2.00   0.0025  -4" depth=".1" height="0.005"     width=".1" color="#80ff00"></a-box>   <a-text value="200"      position="2.1 .1  -3.85" align="center" color="black" width="2"></a-text>
+      <a-box  position="2.50   0.0125  -4" depth=".1" height="0.025"     width=".1" color="#c0ff00"></a-box>   <a-text value="2,000"    position="2.6 .1  -3.85" align="center" color="black" width="2"></a-text>
+      <a-box  position="3.00   0.0625  -4" depth=".1" height="0.0125"    width=".1" color="#ffff00"></a-box>   <a-text value="5,000"    position="3.1 .1  -3.85" align="center" color="black" width="2"></a-text>
+      <a-box  position="3.50   0.125   -4" depth=".1" height="0.25"      width=".1" color="#ffc000"></a-box>   <a-text value="10,000"   position="3.6 .1  -3.85" align="center" color="black" width="2"></a-text>
+      <a-box  position="4.00   0.25    -4" depth=".1" height="0.5"       width=".1" color="#ff6000"></a-box>   <a-text value="20,000"   position="4.1 .1  -3.85" align="center" color="black" width="2"></a-text>
+      <a-box  position="4.50   0.5     -4" depth=".1" height="1.0"       width=".1" color="#ff0000"></a-box>   <a-text value="40,000"   position="4.6 .1  -3.85" align="center" color="black" width="2"></a-text>
+      
+      <a-text value="Select a city, bars are proportional to population weighted density"   position="0  5  -1.85" align="center" color="black" width="4"></a-text>
+      
+      <script>
+const cityData = {
+  Canberra: 2010,
+  Adelaide: 2212,
+  Perth: 2245,
+  SEQ: 2287,
+  Brisbane: 2445,
+  Melbourne: 3349,
+  Dublin: 4290,
+  Sydney : 4294,
+  Stockholm : 5908,
+  Berlin : 8123,
+  Paris : 10489,
+  Athens : 12900,
+  Madrid : 16183,
+  Barcelona : 20533
+  
+};
+
+        
+
+const cityList = Object.keys(cityData);
+let selectedCity = "Sydney";   
+const graph = document.getElementById("graph");
+const menu = document.getElementById("menu");
+
+// Find max density to normalize widths
+const maxDensity = Math.max(...Object.values(cityData));
+
+cityList.forEach((city, index) => {
+  const yOffset = index * 0.2;
+  const density = cityData[city];
+
+  // Normalize the width: e.g. map density range to 0.5–3 units wide
+  const minWidth = 0.5;
+  const maxWidth = 3;
+  const normalizedWidth = ((density / maxDensity) * (maxWidth - minWidth));
+
+  const button = document.createElement("a-box");
+  button.setAttribute("position", `${-normalizedWidth / 2} ${yOffset} 0`);  // center it
+  button.setAttribute("width", normalizedWidth);
+  button.setAttribute("height", "0.15");
+  button.setAttribute("depth", "0.1");
+  button.setAttribute("color", "#4CAF50");
+  button.setAttribute("class", "clickable");
+  button.setAttribute("cityname", city);
+  button.setAttribute("id", `btn-${city}`);
+
+  const label = document.createElement("a-text");
+  label.setAttribute("value", city);
+  label.setAttribute("position", `${0} ${yOffset + 0.01} 0.05`);
+  label.setAttribute("align", "left");
+  label.setAttribute("color", "black");
+  label.setAttribute("width", 4);
+
+  menu.appendChild(button);
+  menu.appendChild(label);
+});
+
+
+        
+        // Load CSV and plot city             -normalizedWidth / 2 + 0.01
+        function loadCity(cityName) {
+          fetch("AllCities.csv")
+            .then(res => res.text())
+            .then(csv => {
+              const parsed = Papa.parse(csv, { header: true });
+              const data = parsed.data;
+              const cityData = data.filter(row => row.City === cityName);
+
+              const group = document.createElement("a-entity");
+              group.setAttribute("id", `city-${cityName}`);
+
+              // Label
+              const label = document.createElement("a-text");
+              label.setAttribute("value", cityName);
+              label.setAttribute("position", "3 2 -4");
+              label.setAttribute("align", "center");
+              label.setAttribute("color", "red");
+              label.setAttribute("width", 30);
+              group.appendChild(label);
+
+              cityData.forEach(row => {
+                const x =   parseFloat(row.x) / 25;
+                const y = - parseFloat(row.y) / 25;
+                const density = parseFloat(row.density);
+                if (!isNaN(x) && !isNaN(y) && !isNaN(density)) {
+                  const height = density / 40000 + .001;
+                  const color = densityToColor(density);
+
+                  const bar = document.createElement("a-box");
+                  bar.setAttribute("width", 0.04);
+                  bar.setAttribute("depth", 0.04);
+                  bar.setAttribute("height", height);
+                  bar.setAttribute("position", `${x} ${height / 2} ${y}`);
+                  bar.setAttribute("color", color);
+                  bar.setAttribute("material", `opacity: 1; transparent: true; color: ${color}`);
+                  group.appendChild(bar);
+                }
+              });
+
+              graph.appendChild(group);
+            });
+        }
+
+        function unloadCity(cityName) {
+          const cityEntity = document.getElementById(`city-${cityName}`);
+          if (cityEntity) {
+            graph.removeChild(cityEntity);
+          }
+        }
+
+function densityToColor(density) {
+         if (density < 1)     {    return 'rgb(170,170,170)';     // Grey for very low density
+  } else if (density < 200) {      return 'rgb(0  ,255,0  )';     // Green for low density
+  } else if (density < 2000) {     return 'rgb(128 ,255,0  )';     // Yellow-Green for moderate density
+  } else if (density < 5000) {     return 'rgb(192,255,0  )';     // Greeny yellow for high density
+  } else if (density < 10000) {    return 'rgb(255,255,0  )';     // Yellow for high density
+  } else if (density < 20000) {    return 'rgb(255,192,0  )';     // Light orange for high density
+  } else if (density < 40000) {    return 'rgb(255,96 ,0  )';     // Deep orange for high density
+  } else {                         return 'rgb(255,0  ,0  )';     // Red for very high density
+  }
+}
+        
+        
+        // Event delegation for menu
+        document.addEventListener("click", function (evt) {
+          const clicked = evt.target;
+          if (clicked.id === "exitButton") {
+            window.location.href = "index.html";
+            return;
+          }
+
+          const city = clicked.getAttribute("cityname");
+          if (!city) return;
+
+          if (selectedCity === city) {
+            unloadCity(city);
+            selectedCity = null;
+            clicked.setAttribute("color", "#4CAF50");
+          } else {
+            if (selectedCity) {
+              unloadCity(selectedCity);
+              const prevBtn = document.getElementById(`btn-${selectedCity}`);
+              if (prevBtn) prevBtn.setAttribute("color", "#4CAF50");
+            }
+            selectedCity = city;
+            clicked.setAttribute("color", "#FFD700");
+            loadCity(city);
+          }
+        });
+      </script>
+    </a-scene>
+  </body>
+</html>
