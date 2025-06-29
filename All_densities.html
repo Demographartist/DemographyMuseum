@@ -33,8 +33,8 @@
       <a-entity id="menu" position="0 2 -2"></a-entity>
 
       <!-- Exit Button -->
-      <a-box  id="exitButton" class="clickable"     position="-1 1   -6"  depth="0.1" height="0.5" width="2" color="#ff5555"></a-box>
-      <a-text value="Exit to home page"                     position="-1 1 -5.95" align="center" color="black" width="4"></a-text>
+      <a-box  id="exitButton" class="clickable"     position="-2 1   -6"  depth="0.1" height="0.5" width="2" color="#ff5555"></a-box>
+      <a-text value="Exit to home page"             position="-2 1 -5.95" align="center" color="black" width="4"></a-text>
       
 
       
@@ -57,9 +57,9 @@
       <a-box  position="4.00   0.25    -4" depth=".1" height="0.5"       width=".1" color="#ff6000"></a-box>   <a-text value="20,000"   position="4.1 .1  -3.85" align="center" color="black" width="2"></a-text>
       <a-box  position="4.50   0.5     -4" depth=".1" height="1.0"       width=".1" color="#ff0000"></a-box>   <a-text value="40,000"   position="4.6 .1  -3.85" align="center" color="black" width="2"></a-text>
       
-      <a-text value="Select a city"                 position="0  5.5  -1.85" align="center" color="Navy blue" width="4.5"></a-text>
-      <a-text value="Bars are proportional to"      position="0  4.9  -1.85" align="center" color="grey"      width="3">  </a-text>
-      <a-text value="population weighted density"   position="0  4.6  -1.85" align="center" color="grey"      width="3">  </a-text>
+      <a-text value="Select a city"                 position="0  5.5  -1.85" align="center" color="blue"      width="4.5"></a-text>
+      <a-text value="Bars are proportional to"      position="0  5.0  -1.85" align="center" color="grey"      width="3">  </a-text>
+      <a-text value="population weighted density"   position="0  4.8  -1.85" align="center" color="grey"      width="3">  </a-text>
       
       <script>
 const cityData = {
@@ -111,7 +111,7 @@ cityList.forEach((city, index) => {
 
   const label = document.createElement("a-text");
   label.setAttribute("value", city);
-  label.setAttribute("position", `${0} ${yOffset + 0.01} 0.05`);
+  label.setAttribute("position", `${0} ${yOffset + 0.01} 0.00`);
   label.setAttribute("align", "left");
   label.setAttribute("color", "black");
   label.setAttribute("width", 4);
