@@ -4,29 +4,33 @@
   <meta charset="UTF-8" />
   <title>Museum of Demography – 3D Models</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      min-height: 100vh;
     }
 
     header {
       background-color: #f0f0f0;
-      padding: 20px 30px;
+      padding: 20px;
       text-align: center;
       border-bottom: 1px solid #ccc;
     }
 
     header h1 {
       margin: 0;
-      font-size: 32px;
+      font-size: 2.5vw;
     }
 
     header h2 {
       margin: 5px 0 0;
-      font-size: 18px;
+      font-size: 1.3vw;
       font-weight: normal;
       color: #555;
     }
@@ -34,21 +38,23 @@
     main {
       display: flex;
       flex: 1;
+      flex-direction: row;
+      flex-wrap: wrap;
     }
 
     .menu {
-      width: 550px;
+      flex: 1 1 300px;
+      max-width: 500px;
       background-color: #333;
       color: white;
       padding: 20px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
     }
 
     .menu-top a {
       display: block;
-      color: white;
+      color: #99ccff;
       text-decoration: none;
       margin-bottom: 20px;
       line-height: 1.4;
@@ -58,35 +64,67 @@
       color: #ccc;
     }
 
-    .acknowledgement {
-      font-size: 11px;
-      color: #ccc;
-      margin-top: 30px;
-      padding-right: 10px;
-      overflow-y: auto;
-      max-height: 300px;
+    .menu-top p {
+      font-size: 0.95em;
+      line-height: 1.5;
+      margin-bottom: 20px;
     }
 
     .content {
-      flex: 1;
-      padding: 40px;
+      flex: 2 1 600px;
+      padding: 30px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      min-width: 0;
+    }
+
+    img#photo {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
     }
 
     #caption {
       margin-top: 15px;
-      font-size: 18px;
+      font-size: 1.2em;
+      text-align: center;
     }
 
     #download {
       margin-top: 10px;
-      font-size: 16px;
+      font-size: 1em;
       text-decoration: underline;
       color: #0066cc;
       cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 5vw;
+      }
+
+      header h2 {
+        font-size: 3vw;
+      }
+
+      main {
+        flex-direction: column;
+      }
+
+      .menu, .content {
+        max-width: 100%;
+        padding: 20px;
+      }
+
+      .menu {
+        order: 2;
+      }
+
+      .content {
+        order: 1;
+      }
     }
   </style>
 </head>
@@ -100,28 +138,97 @@
   <main>
     <div class="menu">
       <div class="menu-top">
-        <a href="https://makerspace.anu.edu.au/" style="color: #99ccff;" target="_blank">Download the R code</a>
-        <p> This zip file contains R code and an excel spreadsheet DataHoldings.xlsx. Edit lines 15 and 16 of the R code to specify which which dataset you want to model. 
-            You can add any new dataset into the spreadsheet and print out the population pyramid, or other demographic sculpture. </p>
-        <p> You are free to create as many demographic sculptures as you wish. Reference Tim Carlton, Demography Museum,  </p>
-        <p> If you display your own physical manifestation of a Museum of Demography, please share your experience with me Tim.Carlton at anu.edu.au.</p>
+        <a href="https://demographartist.github.io/DemographyMuseum/Population Pyramid Printer.zip" download>Download the files to make your own</a>
+        <p>The downloaded zip file contains R code and an Excel spreadsheet. Add a tab with your own country’s data or projections, and print it out.</p>
+        <p>You are free to create as many demographic sculptures as you wish. Reference Tim Carlton, Demography Museum.</p>
+        <p>If you display your own Museum of Demography, please share it with Tim.Carlton at anu.edu.au.</p>
 
-        
         <a>————————————</a>
 
-        <a href="https://www.thingiverse.com/timbocarlton/designs" style="color: #99ccff;" target="_blank">Download museum models from the Thingiverse </a>
-        <p> All my models are stored in the Thingiverse. Download and print any of the models that you can see at the launch of the Demography Museum at the International Popualtion Conference in Brisbane, Australia 2025.  </p>
-        <p> If you display your own physical manifestation of a Museum of Demography, please share your experience with me Tim.Carlton at anu.edu.au.</p>
+        <a href="https://www.thingiverse.com/timbocarlton/designs" target="_blank">Download museum models from the Thingiverse</a>
+        <p>All models are stored on Thingiverse and were showcased at the International Population Conference in Brisbane, 2025.</p>
+        <p>If you display your own version, please share your experience with Tim.Carlton at anu.edu.au.</p>
         <a>————————————</a>
       </div>
+    </div>
 
-      <div class="content">
-      <!-- EMBED STLVIEW IFRAME HERE -->
-      <iframe id="vs_iframe" src="https://www.viewstl.com/?embedded&orientation=right&shading=flat&bgcolor=azure&color=blue&url=https%3A%2F%2Fdemographartist.github.io%2FDemographyMuseum%2FSweden_Immigration.html&rotation=no" style="border:0;margin:0;width:100%;height:100%;"></iframe>
-      <div id="caption">Swedish Immigration Pyramid — 1968 to 2023</div>
-      <a id="download" href="Sweden_Immigration.stl" download>Download STL file</a>
+    <div class="content">
+      <img id="photo" src="Pyramid Photo.jpg" alt="Photo 1">
+      <div id="caption">Solid Dynamic Population Pyramid: Australia 1921–2021</div>
+      <div id="download">Download STL</div>
     </div>
   </main>
 
+  <!-- JS and 3D Viewer scripts are unchanged -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/STLLoader.js"></script>
+
+  <script>
+    const models = [
+      { file: "Model1.stl", caption: "Australian Pyramid" },
+      { file: "Model2.stl", caption: "My Maternal Ambivalence, Isabel Waters" },
+      { file: "Model3.stl", caption: "Athens Population Density" },
+      { file: "Model4.stl", caption: "GDP vs Life Expectancy Bubbles" }
+    ];
+
+    let index = 0;
+    let scene, camera, renderer, controls, loader, model;
+
+    const viewer = document.querySelector(".content");
+    const caption = document.getElementById("caption");
+    const download = document.getElementById("download");
+
+    function initViewer() {
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 0, 100);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth * 0.5, window.innerHeight * 0.5);
+      viewer.appendChild(renderer.domElement);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+
+      const light = new THREE.DirectionalLight(0xffffff, 1);
+      light.position.set(1, 1, 1).normalize();
+      scene.add(light);
+
+      loader = new THREE.STLLoader();
+      loadModel();
+      animate();
+    }
+
+    function loadModel() {
+      if (model) scene.remove(model);
+
+      loader.load(models[index].file, geometry => {
+        const material = new THREE.MeshPhongMaterial({ color: 0x3399ff });
+        model = new THREE.Mesh(geometry, material);
+        geometry.computeBoundingBox();
+        const center = geometry.boundingBox.getCenter(new THREE.Vector3());
+        model.position.sub(center);
+        scene.add(model);
+
+        caption.textContent = models[index].caption;
+        download.onclick = () => window.open(models[index].file, "_blank");
+      });
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (model) model.rotation.y += 0.005;
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    setInterval(() => {
+      index = (index + 1) % models.length;
+      loadModel();
+    }, 5000);
+
+    initViewer();
+  </script>
 </body>
 </html>
